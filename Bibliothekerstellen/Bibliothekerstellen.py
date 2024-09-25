@@ -11,6 +11,11 @@ def create_membership_number():
     check_digit = sum(numbers) % 10
     return f"MGN{''.join(map(str, numbers))}{check_digit}"
 
+# Funktion zum Generieren von Regaldaten
+def assign_shelf():
+    shelf_number = random.randint(1, 10)  # Erzeugt zufällige Regalnummern zwischen 1 und 10
+    return f"Regal-{shelf_number}"
+
 # Funktion zum Generieren von Medien-Datensätzen
 def generate_media_record(fake):
     media_type = random.choice(["Buch", "CD", "DVD"])
@@ -21,6 +26,7 @@ def generate_media_record(fake):
     user = fake.name()
     timestamp = fake.date_time_this_year().strftime("%Y-%m-%d %H:%M:%S") if random.choice([True, False]) else ""
     title_list = fake.sentence(nb_words=6) if media_type == "CD" else ""
+    shelf = assign_shelf()  # Regaldaten hinzufügen
     
     return {
         "Medientyp": media_type,
@@ -30,7 +36,8 @@ def generate_media_record(fake):
         "Kategorie": category,
         "Code": code,
         "Letzter Nutzer": user,
-        "Verleihdatum": timestamp
+        "Verleihdatum": timestamp,
+        "Regal": shelf  # Zuordnung zum Regal
     }
 
 # Funktion zum Generieren von Nutzer-Datensätzen (aufgeteilt in Vorname, Nachname, Straße, Hausnummer, PLZ, Ort)
@@ -70,7 +77,7 @@ def generate_csv(entries_count, country_code):
     fake = Faker(country_code)
     
     with open("bibliothek.csv", mode="w", newline="", encoding="utf-8") as file:
-        fieldnames = ["Medientyp", "Autor", "Titel", "Titelliste", "Kategorie", "Code", "Letzter Nutzer", "Verleihdatum"]
+        fieldnames = ["Medientyp", "Autor", "Titel", "Titelliste", "Kategorie", "Code", "Letzter Nutzer", "Verleihdatum", "Regal"]
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         
